@@ -30,5 +30,36 @@
         </foreach>
     </delete>
 
+    <update id="update">
+        update dish
+        <set>
+            <if test="name != null">
+                name = #{name},
+            </if>
+            <if test="category_id != null">
+                name = #{categoryId},
+            </if>
+            <if test="price != null">
+                name = #{price},
+            </if>
+            <if test="image != null">
+                name = #{image},
+            </if>
+            <if test="description != null">
+                name = #{description},
+            </if>
+            <if test="status != null">
+                name = #{status},
+            </if>
+            <if test="update_time != null">
+                name = #{updateTime},
+            </if>
+            <if test="update_user != null">
+                update_user = #{updateUser},
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
 
 </mapper>
