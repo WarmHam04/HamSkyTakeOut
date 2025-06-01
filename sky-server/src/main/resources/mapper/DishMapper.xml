@@ -61,5 +61,21 @@
         where id = #{id}
     </update>
 
+    <select id="list" parameterType="com.sky.entity.Dish" resultType="com.sky.entity.Dish">
+        SELECT id, name, price, category_id, status, update_time, create_time
+        FROM dish
+        WHERE 1=1
+        <if test="name != null and name != ''">
+            AND name = #{name}
+        </if>
+        <if test="categoryId != null">
+            AND category_id = #{categoryId}
+        </if>
+        <if test="status != null">
+            AND status = #{status}
+        </if>
+    </select>
+
+
 
 </mapper>
