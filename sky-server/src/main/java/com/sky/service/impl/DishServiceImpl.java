@@ -13,10 +13,12 @@ import com.sky.mapper.DishFlavorMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.service.DishService;
 import com.sky.vo.DishVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,8 @@ public class DishServiceImpl implements DishService {
     private DishFlavorMapper dishFlavorMapper;
     @Autowired
     private SetmealDishMapper setmealDishMapper;
+
+
 
     /**
      * 插入菜品数据和口味数据
@@ -166,6 +170,8 @@ public class DishServiceImpl implements DishService {
      * @return
      */
     public List<DishVO> listWithFlavor(Dish dish) {
+
+
         List<Dish> dishList = dishMapper.list(dish);
 
         List<DishVO> dishVOList = new ArrayList<>();
@@ -182,6 +188,18 @@ public class DishServiceImpl implements DishService {
         }
 
         return dishVOList;
+
+    }
+
+    /**
+     * 修改菜品售卖状态
+     * @param status
+     * @param id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Dish dish = Dish.builder().id(id).status(status).build();
+        dishMapper.update(dish);
 
     }
 }

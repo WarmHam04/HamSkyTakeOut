@@ -66,14 +66,22 @@ public class AutoFillAspect {
      * @param methodName 方法名
      * @param value 参数值
      */
+//    private void invokeSetter(Object entity, String methodName, Object value)
+//            throws Exception {
+//        Class<?> entityClass = entity.getClass();
+//        // 获取参数类型（支持基本类型自动装箱）
+//        Class<?> paramType = value instanceof Long ? long.class : value.getClass();
+//        // 获取方法对象并调用[1,3](@ref)
+//        Method method = entityClass.getDeclaredMethod(methodName, paramType);
+//        method.setAccessible(true);  // 允许访问私有方法[1,4](@ref)
+//        method.invoke(entity, value); // 执行方法调用[2,6](@ref)
+//    }
     private void invokeSetter(Object entity, String methodName, Object value)
             throws Exception {
         Class<?> entityClass = entity.getClass();
-        // 获取参数类型（支持基本类型自动装箱）
-        Class<?> paramType = value instanceof Long ? long.class : value.getClass();
-        // 获取方法对象并调用[1,3](@ref)
-        Method method = entityClass.getDeclaredMethod(methodName, paramType);
-        method.setAccessible(true);  // 允许访问私有方法[1,4](@ref)
-        method.invoke(entity, value); // 执行方法调用[2,6](@ref)
+        Method method = entityClass.getDeclaredMethod(methodName, value.getClass());
+        method.setAccessible(true);
+        method.invoke(entity, value);
     }
+
 }

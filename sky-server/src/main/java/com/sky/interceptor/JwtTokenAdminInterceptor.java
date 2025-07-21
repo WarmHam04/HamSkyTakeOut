@@ -40,25 +40,38 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         }
 
         //1、从请求头中获取令牌
-        String token = request.getHeader(jwtProperties.getAdminTokenName());
+        //可直接修改yml文件中的AdminTokenName的值
+        //String token = request.getHeader("Authorization");
+        String authHeader = request.getHeader(jwtProperties.getAdminTokenName());
+        if(authHeader!=null&&authHeader.startsWith("Bearer ")){
+            String token = authHeader.substring(7);
+            System.out.println("后端接收到的token: " + token);
 
-        //2、校验令牌
-        try {
-            log.info("jwt校验:{}", token);
-            Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
-            //获取当前员工id
-            Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("当前员工id：", empId);
+            //2、校验令牌
+            try {
+                log.info("jwt校验:{}", token);
+                Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
+                //获取当前员工id
+                Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
+                log.info("当前员工id：", empId);
 
-            //以当前的员工的id来设置一个线程id
-            BaseContext.setCurrentId(empId);
+                //以当前的员工的id来设置一个线程id
+                BaseContext.setCurrentId(empId);
 
-            //3、通过，放行
-            return true;
-        } catch (Exception ex) {
-            //4、不通过，响应401状态码
-            response.setStatus(401);
-            return false;
-        }
+                //3、通过，放行
+                return true;
+            } catch (Exception ex) {
+                //4、不通过，响应401状态码
+                response.setStatus(401);
+                return false;
+            }
+        }else log.info("后端接受到的authHeader不符合要求:{}", authHeader);
+
+
+        return false;
+
+
+
+
     }
 }

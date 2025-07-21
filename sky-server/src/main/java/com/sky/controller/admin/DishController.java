@@ -1,5 +1,6 @@
 package com.sky.controller.admin;
 
+import com.sky.annotation.AutoFill;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
@@ -11,9 +12,11 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/dish")
@@ -22,11 +25,16 @@ import java.util.List;
 public class DishController {
     @Autowired
     public DishService dishService;
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @PostMapping
     @ApiOperation("新增菜品")
     public Result saveDish(@RequestBody DishDTO dishDTO) {
         log.info("新增菜品,{}", dishDTO);
+        //删除所有相关缓存
+        String keys = "dish_"+dishDTO.getCategoryId();
+        cleanCache(keys);
         dishService.saveWithFlavor(dishDTO);
         return Result.success();
     }
@@ -44,6 +52,9 @@ public class DishController {
     @ApiOperation("批量删除菜品")
     public Result deleteDish(@RequestParam List<Long> ids){
         log.info("批量删除菜品：{}",ids);
+        //一次性删除所有相关缓存
+        String pattern = "dish_*";
+        cleanCache(pattern);
         dishService.deleteBatch(ids);
         return Result.success();
     }
@@ -61,7 +72,26 @@ public class DishController {
     @ApiOperation("修改菜品")
     public Result update(@RequestBody DishDTO dishDTO) {
         log.info("修改菜品{}", dishDTO);
+        //删除有关缓存即可
+        String keys = "dish_*";
+        cleanCache(keys);
         dishService.updateWithFlavor(dishDTO);
+        return Result.success();
+    }
+
+    private void cleanCache(String pattern){
+        Set keys = redisTemplate.keys(pattern);
+        redisTemplate.delete(keys);
+
+    }
+
+    @PostMapping("status/{status}")
+    @ApiOperation("起售商品或停售商品")
+    public Result<String> status(@PathVariable Integer status,Long id){
+        log.info("修改菜品的状态{}",status);
+        String pattern = "dish_*";
+        cleanCache(pattern);
+        dishService.startOrStop(status,id);
         return Result.success();
     }
 }
