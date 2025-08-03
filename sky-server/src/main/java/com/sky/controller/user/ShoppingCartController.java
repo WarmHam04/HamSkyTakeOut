@@ -47,4 +47,19 @@ public class ShoppingCartController {
         List<ShoppingCart> list = shoppingCartService.showList();
         return Result.success(list);
     }
+
+    @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
+    public Result clean(){
+        log.info("清空购物车");
+        shoppingCartService.clean();
+        return Result.success();
+    }
+
+    @PostMapping("/sub")
+    @ApiOperation("删减菜品或套餐")
+    public Result sub(@RequestBody ShoppingCartDTO shoppingCartDTO) {
+        shoppingCartService.subDOS(shoppingCartDTO);
+        return Result.success();
+    }
 }
