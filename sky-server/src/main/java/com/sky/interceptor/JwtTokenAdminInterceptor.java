@@ -45,7 +45,7 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
         String authHeader = request.getHeader(jwtProperties.getAdminTokenName());
         if(authHeader!=null&&authHeader.startsWith("Bearer ")){
             String token = authHeader.substring(7);
-            System.out.println("后端接收到的token: " + token);
+            //System.out.println("后端接收到的token: " + token);
 
             //2、校验令牌
             try {
