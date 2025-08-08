@@ -165,4 +165,31 @@ public class OrderServiceImpl implements OrderService {
         wss.sendToAllClient(json);
 
     }
+
+    /**
+     * 客户催单
+     * @param id
+     */
+    @Override
+    public void remindById(Long id) {
+        Orders od = orderMapper.getById(id);
+
+        if(od==null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        //通过websocket向客户端浏览器推送消息
+        String outTradeNo = od.getNumber();
+
+        Map map = new HashMap();
+        map.put("code", 2);
+        map.put("orderId",od.getId());
+        map.put("content","订单号"+outTradeNo);
+
+        String json = JSON.toJSONString(map);
+
+        wss.sendToAllClient(json);
+
+
+
+    }
 }

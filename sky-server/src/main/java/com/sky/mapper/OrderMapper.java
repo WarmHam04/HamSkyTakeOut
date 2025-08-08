@@ -33,4 +33,12 @@ public interface OrderMapper {
      */
     @Select("select * from orders where status = #{status} and order_time = #{time}")
     List<Orders> getOrdersByStatusAndTime(Integer status, LocalDateTime time);
+
+    /**
+     * 根据id获取订单
+     * @param id
+     * @return
+     */
+    @Select("select * from orders where id = #{id}")
+    Orders getById(Long id);
 }
