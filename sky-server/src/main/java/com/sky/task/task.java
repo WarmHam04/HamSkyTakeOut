@@ -20,7 +20,7 @@ public class task {
     /**
      * 处理超时订单
      */
-    @Scheduled(cron = "0 * * * * ?")
+    @Scheduled(cron = "0 0  1 * * ?")
     //@Scheduled(cron = "0/5 * * * * ?")//测试
     public void processTimeoutOrder(){
         log.info("定时处理超时订单：{}", LocalDateTime.now());
